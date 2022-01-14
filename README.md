@@ -13,16 +13,16 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Installation
 
-TQICoordinator is available through [CocoaPods](https://cocoapods.org). To install
+TQICoordinator is available through CocoaPods. To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'TQICoordinator'
+pod 'TQICoordinator', :git => 'https://github.com/vafreitas/ios-mod-coordinator.git'
 ```
 
 ## Author
 
-tqi-valves, tqi_valves@uolinc.com
+vafreitas, vitoralves59@gmail.com
 
 ## License
 
