@@ -1,0 +1,16 @@
+PODS:
+  - TQICoordinator (1.0.0)
+
+DEPENDENCIES:
+  - TQICoordinator (from `../`)
+
+EXTERNAL SOURCES:
+  TQICoordinator:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  TQICoordinator: cdf6712f1457fd83529a5b18b3fb39c856dc2ec0
+
+PODFILE CHECKSUM: 071f65b0fcb24eddef1b8a8a6e0054f8b925d63f
+
+COCOAPODS: 1.11.2
