@@ -1,0 +1,6 @@
+use_frameworks!
+target 'TQICoordinator_Tests' do
+  pod 'TQICoordinator', :path => '../'
+  
+  
+end
