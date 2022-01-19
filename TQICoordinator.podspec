@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TQICoordinator'
-  s.version          = '1.0.0'
+  s.version          = '1.1.0'
   s.summary          = 'Is a Base Coordinator For TQI Projects'
   
   s.homepage         = 'https://github.com/vafreitas/TQICoordinator'
