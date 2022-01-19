@@ -2,88 +2,50 @@
 //  Coordinator.swift
 //  TQIBank
 //
-//  Created by Roberth Diorges on 12/01/22.
+//  Created by Luis Teodoro on 12/01/22.
 //
-
 import UIKit
+import Foundation
 
-public protocol CoordinatorDelegate: AnyObject {
-    func didFinish(_ coordinator: Coordinator)
+public enum PresentationType {
+    case push(navigation: UINavigationController)
+    case present(viewController: UIViewController)
 }
 
-extension CoordinatorDelegate {
-    public func didFinish(_ coordinator: Coordinator) {}
-}
+public protocol Coordinator: AnyObject {
 
-public protocol Coordinator: CoordinatorDelegate {
-    var delegate: CoordinatorDelegate? { get set }
-    var childCoordinator: Coordinator? { get set }
-    var viewController: UIViewController! { get set }
-    var navigationController: UINavigationController? { get set }
-    
+    associatedtype V: UIViewController
+    var view: V? { get set }
+    var navigation: UINavigationController? { get set }
+    var presentationType: PresentationType? { get set }
+    func start(usingPresentation presentation: PresentationType, animated: Bool)
     func stop()
-    func start(usingPresenter presenter: CoordinatorPresenter, animated: Bool)
-    func performStart(usingPresenter presenter: CoordinatorPresenter, animated: Bool)
-    func didFinish(_ coordinator: Coordinator)
-    
-    func route(to coordinator: Coordinator, withPresenter presenter: CoordinatorPresenter, animated: Bool, delegate: CoordinatorDelegate?)
-    func route(to location: RouterLocation, withPresenter presenter: CoordinatorPresenter, animated: Bool, delegate: CoordinatorDelegate?)
+    func start() -> V
 }
 
 extension Coordinator {
 
-    public func start(usingPresenter presenter: CoordinatorPresenter, animated: Bool = true) {
-        performStart(usingPresenter: presenter, animated: animated)
-    }
-    
-    public func performStart(usingPresenter presenter: CoordinatorPresenter, animated: Bool) {
-        navigationController = presenter.present(destiny: viewController, animated: animated)
+    public func start() -> V {
+        if view == nil {
+            fatalError("Error coordinator!")
+        }
+        return self.view!
     }
 
-    public func stop() {
-        delegate = nil
-        viewController = nil
-        childCoordinator = nil
-        navigationController = nil
-    }
-    
-    public func didFinish(_ coordinator: Coordinator) {
-        coordinator.stop()
-        childCoordinator = nil
-    }
-    
-    /**
-     Route to Coordinator.
-     
-     - Parameters:
-         - coordinator: The coordinator of the route
-         - presenter: The Presenter Style of the show screen
-         - animated: Using animated
-         - delegate: Coordinator delegate
-     */
-    public func route(to coordinator: Coordinator, withPresenter presenter: CoordinatorPresenter, animated: Bool = true, delegate: CoordinatorDelegate? = nil) {
-        childCoordinator = coordinator
-        coordinator.delegate = delegate ?? self
-        coordinator.start(usingPresenter: presenter, animated: animated)
-    }
-    
-    /**
-     Route to location registered in TQICoordinator.
-     
-     - Parameters:
-         - location: The Location of the route
-         - presenter: The Presenter Style of the show screen
-         - animated: Using animated
-         - delegate: Coordinator delegate
-     
-     
-     route(to: location, withPresenter: .push(navigationViewController), animated: true)
-     */
-    public func route(to location: RouterLocation, withPresenter presenter: CoordinatorPresenter, animated: Bool, delegate: CoordinatorDelegate? = nil) {
-        guard let coordinator = TQIRouter.coordinator(for: location) else {
-            location.onError(.start(CoordinatorError.notFound))
-            return
+    public func start(usingPresentation presentation: PresentationType, animated: Bool = true) {
+        presentationType = presentation
+        switch presentationType {
+        case .push(let navigation)?:
+            self.navigation = navigation
+            navigation.pushViewController(start(), animated: animated)
+        case .present(let navigation)?:
+            self.navigation = UINavigationController(rootViewController: start())
+            guard let nav = self.navigation else { return }
+            nav.modalPresentationStyle = .fullScreen
+            navigation.present(nav, animated: animated, completion: nil)
+        case .none:
+            break
         }
-        route(to: coordinator, withPresenter: presenter, animated: animated, delegate: delegate)
     }
+
 }
